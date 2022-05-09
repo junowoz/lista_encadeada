@@ -43,11 +43,11 @@ noatual = cabeca;
 }
 }
 / Lista todos os elementos presentes na lista encadeada */
-void listar (Faluno noatual)
-{
+void listar (Faluno noatual) {
 int i=0;
 while( noatual != NULL) / Enquanto nao chega no fim da lista /
 {
+    
 i++;
 printf("\n\nAluno numero %d\nMatricula: %c \nNome", i, noatual->matricula, noatual->nome);
 noatual = noatual->proximo; / Faz noatual apontar para o proximo no */
