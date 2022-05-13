@@ -3,19 +3,20 @@
 
 /* Estrutura que será usada para criar os nós da lista */
 
-typedef struct aluno{
-int matricula;
-char nome;
-struct aluno*proximo;
-} Faluno;
+typedef struct aluno {
+    int matricula;
+    char nome;
+    struct aluno*proximo;
+} 
+
+Faluno;
 
 /* Estrutura que será usada para criar os nós da lista */
 
 void inserir (Faluno **cabeca);
 void listar (Faluno *cabeca);
 
-int main ()
-{
+int main () {
 
 Faluno cabeca = NULL; / Ponteiro para a cabeca da lista /
 Faluno noatual; / Ponteiro a ser usado para percorrer a lista no momento de desalocar seus elementos/
