@@ -3,17 +3,17 @@
 
 struct num
 {
-    int num;
-    struct num *prox;
+    int num;          // ponteiro num
+    struct num *prox; // ponteiro para o proximo num
 };
-typedef struct num num;
+typedef struct num num; /*criado um ponteiro chamado num, e um ponteiro para o proximo num*/
 
-int tam;
+int tam; // ponteiro para guardar o tamanho da lista
 
-void inicia(num *LISTA);
-int menu(void);
-void opcao(num *LISTA, int op);
-num *criaNo();
+void inicia(num *LISTA);        // criado ponteiro para facilitar a inserção de novos elementos no final da lista
+int menu(void);                 // int para o switch
+void opcao(num *LISTA, int op); // escolher que ação será executada na lista
+num *criaNo();                  // ponteiro para criação
 void insereFim(num *LISTA);
 void insereInicio(num *LISTA);
 void exibe(num *LISTA);
@@ -22,10 +22,11 @@ void insere(num *LISTA);
 num *retiraInicio(num *LISTA);
 num *retiraFim(num *LISTA);
 num *retira(num *LISTA);
+num *retiraElemento(num *LISTA);
 
 int main(void)
 {
-    num *LISTA = (num *)malloc(sizeof(num));
+    num *LISTA = (num *)malloc(sizeof(num)); // cria um novo no
     if (!LISTA)
     {
         printf("Sem memoria disponivel!\n");
@@ -66,7 +67,8 @@ int menu(void)
     printf("5. Escolher onde inserir\n");
     printf("6. Retirar do inicio\n");
     printf("7. Retirar do fim\n");
-    printf("8. Escolher de onde tirar\n");
+    printf("8. Retirar por Posição\n");
+    printf("9. Retirar por Elemento\n");
     printf("Opcao: ");
     scanf("%d", &opt);
 
@@ -115,6 +117,11 @@ void opcao(num *LISTA, int op)
 
     case 8:
         tmp = retira(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    case 9:
+        tmp = retiraElemento(LISTA);
         printf("Retirado: %3d\n\n", tmp->num);
         break;
 
@@ -324,5 +331,51 @@ num *retira(num *LISTA)
     {
         printf("Número invalido\n\n");
         return NULL;
+    }
+}
+num *retiraElemento(num *LISTA)
+{
+    int opt,
+        count;
+
+    system("clear");
+    if (vazia(LISTA))
+    {
+        printf("Lista vazia!\n\n");
+    }
+
+    num *tmp;
+    tmp = LISTA->prox;
+    printf("Lista:");
+    while (tmp != NULL)
+    {
+        printf("%5d", tmp->num);
+        tmp = tmp->prox;
+    }
+    printf("\n        ");
+
+    for (count = 0; count < tam; count++)
+        printf("  ^  ");
+    printf("\nOrdem:");
+    for (count = 0; count < tam; count++)
+        printf("%5d", count + 1);
+
+    printf("\n\n");
+
+    printf("Que numero voce deseja retirar: ");
+    scanf("%d", &opt);
+
+    if (opt == opt)
+    {
+
+        num *atual = LISTA->prox,
+            *anterior = LISTA;
+
+        anterior = atual;
+        atual = atual->prox;
+
+        anterior->prox = atual->prox;
+        LISTA--;
+        return atual;
     }
 }
