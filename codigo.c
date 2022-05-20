@@ -1,89 +1,328 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-/* Estrutura que será usada para criar os nós da lista */
-
-typedef struct aluno {
-    int matricula;
-    char nome;
-    struct aluno*proximo;
-} 
-
-Faluno;
-
-/* Estrutura que será usada para criar os nós da lista */
-
-void inserir (Faluno **cabeca);
-void listar (Faluno *cabeca);
-
-int main () {
-
-Faluno cabeca = NULL; / Ponteiro para a cabeca da lista /
-Faluno noatual; / Ponteiro a ser usado para percorrer a lista no momento de desalocar seus elementos/
-int n; /* Caractere para receber a opcao do usuario */
-
-/Iniciando a estrutura de repetição/
-do {
-printf("\n\nOpcoes: \n1 -> para inserir novo Aluno;\n2 -> para listar os Alunos; \n0 -> para sair \nEscolha sua opcao:");
-scanf("%d", &n); /* Ler a opcao do usuario */
-switch(n) {
-case 1 : inserir(&cabeca); break;
-case 2 : listar(cabeca); break;
-case 0 : break;
-default: printf("\n\n Opcao nao valida");
-}
-} while (n != '0');
-
-/* Desaloca a memoria alocada para os elementos da lista /
-noatual = cabeca;
-while (noatual != NULL)
+struct Node
 {
-cabeca = noatual->proximo;
-free(noatual);
-noatual = cabeca;
-}
-}
-/ Lista todos os elementos presentes na lista encadeada */
-void listar (Faluno noatual) {
-int i=0;
-while( noatual != NULL) / Enquanto nao chega no fim da lista /
+    int num;
+    struct Node *prox;
+};
+typedef struct Node node;
+
+int tam;
+
+void inicia(node *LISTA);
+int menu(void);
+void opcao(node *LISTA, int op);
+node *criaNo();
+void insereFim(node *LISTA);
+void insereInicio(node *LISTA);
+void exibe(node *LISTA);
+void libera(node *LISTA);
+void insere(node *LISTA);
+node *retiraInicio(node *LISTA);
+node *retiraFim(node *LISTA);
+node *retira(node *LISTA);
+
+int main(void)
 {
-    
-i++;
-printf("\n\nAluno numero %d\nMatricula: %c \nNome", i, noatual->matricula, noatual->nome);
-noatual = noatual->proximo; / Faz noatual apontar para o proximo no */
-}
+    node *LISTA = (node *)malloc(sizeof(node));
+    if (!LISTA)
+    {
+        printf("Sem memoria disponivel!\n");
+        exit(1);
+    }
+    else
+    {
+        inicia(LISTA);
+        int opt;
+
+        do
+        {
+            opt = menu();
+            opcao(LISTA, opt);
+        } while (opt);
+
+        free(LISTA);
+        return 0;
+    }
 }
 
-/* Funcao para inserir um novo no, ao final da lista */
+void inicia(node *LISTA)
+{
+    LISTA->prox = NULL;
+    tam = 0;
+}
 
-void inserir (Faluno **cabeca)
+int menu(void)
 {
-Faluno *noatual, *novono;
-int matricula;
-char nome;
-printf("\n Nova matricula: ");
-scanf("%d", &matricula);
-printf("\n Nome do aluno");
-scanf("%c", &nome);
-if (cabeca == NULL) / Se ainda nao existe nenhum produto na lista /
-{
-/ cria o no cabeca */
-*cabeca = (Faluno *) malloc(sizeof(Faluno));
-(*cabeca)->matricula = matricula;
-(*cabeca)->nome = nome;
-(cabeca)->proximo = NULL;
+    int opt;
+
+    printf("Escolha a opcao\n");
+    printf("0. Sair\n");
+    printf("1. Zerar lista\n");
+    printf("2. Exibir lista\n");
+    printf("3. Adicionar node no inicio\n");
+    printf("4. Adicionar node no final\n");
+    printf("5. Escolher onde inserir\n");
+    printf("6. Retirar do inicio\n");
+    printf("7. Retirar do fim\n");
+    printf("8. Escolher de onde tirar\n");
+    printf("Opcao: ");
+    scanf("%d", &opt);
+
+    return opt;
 }
-else
+
+void opcao(node *LISTA, int op)
 {
-/ Se ja existem elementos na lista, deve percorre-la ate' o seu final e inserir o novo elemento */
-noatual = cabeca;
-while(noatual->proximo != NULL)
-noatual = noatual->proximo; / Ao final do while, noatual aponta para o ultimo no */
-novono = (Faluno ) malloc(sizeof(Faluno));/ Aloca memoria para o novo no /
-novono->matricula = matricula;
-novono->nome = nome;
-novono->proximo = NULL;
-noatual->proximo = novono; / Faz o ultimo no apontar para o novo no */
+    node *tmp;
+    switch (op)
+    {
+    case 0:
+        libera(LISTA);
+        break;
+
+    case 1:
+        libera(LISTA);
+        inicia(LISTA);
+        break;
+
+    case 2:
+        exibe(LISTA);
+        break;
+
+    case 3:
+        insereInicio(LISTA);
+        break;
+
+    case 4:
+        insereFim(LISTA);
+        break;
+
+    case 5:
+        insere(LISTA);
+        break;
+
+    case 6:
+        tmp = retiraInicio(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    case 7:
+        tmp = retiraFim(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    case 8:
+        tmp = retira(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    default:
+        printf("Comando invalido\n\n");
+    }
 }
+
+int vazia(node *LISTA)
+{
+    if (LISTA->prox == NULL)
+        return 1;
+    else
+        return 0;
+}
+
+node *aloca()
+{
+    node *novo = (node *)malloc(sizeof(node));
+    if (!novo)
+    {
+        printf("Sem memoria disponivel!\n");
+        exit(1);
+    }
+    else
+    {
+        printf("Novo elemento: ");
+        scanf("%d", &novo->num);
+        return novo;
+    }
+}
+
+void insereFim(node *LISTA)
+{
+    node *novo = aloca();
+    novo->prox = NULL;
+
+    if (vazia(LISTA))
+        LISTA->prox = novo;
+    else
+    {
+        node *tmp = LISTA->prox;
+
+        while (tmp->prox != NULL)
+            tmp = tmp->prox;
+
+        tmp->prox = novo;
+    }
+    tam++;
+}
+
+void insereInicio(node *LISTA)
+{
+    node *novo = aloca();
+    node *oldHead = LISTA->prox;
+
+    LISTA->prox = novo;
+    novo->prox = oldHead;
+
+    tam++;
+}
+
+void exibe(node *LISTA)
+{
+    system("clear");
+    if (vazia(LISTA))
+    {
+        printf("Lista vazia!\n\n");
+        return;
+    }
+
+    node *tmp;
+    tmp = LISTA->prox;
+    printf("Lista:");
+    while (tmp != NULL)
+    {
+        printf("%5d", tmp->num);
+        tmp = tmp->prox;
+    }
+    printf("\n        ");
+    int count;
+    for (count = 0; count < tam; count++)
+        printf("  ^  ");
+    printf("\nOrdem:");
+    for (count = 0; count < tam; count++)
+        printf("%5d", count + 1);
+
+    printf("\n\n");
+}
+
+void libera(node *LISTA)
+{
+    if (!vazia(LISTA))
+    {
+        node *proxNode,
+            *atual;
+
+        atual = LISTA->prox;
+        while (atual != NULL)
+        {
+            proxNode = atual->prox;
+            free(atual);
+            atual = proxNode;
+        }
+    }
+}
+
+void insere(node *LISTA)
+{
+    int pos,
+        count;
+    printf("Em que posicao, [de 1 ate %d] voce deseja inserir: ", tam);
+    scanf("%d", &pos);
+
+    if (pos > 0 && pos <= tam)
+    {
+        if (pos == 1)
+            insereInicio(LISTA);
+        else
+        {
+            node *atual = LISTA->prox,
+                 *anterior = LISTA;
+            node *novo = aloca();
+
+            for (count = 1; count < pos; count++)
+            {
+                anterior = atual;
+                atual = atual->prox;
+            }
+            anterior->prox = novo;
+            novo->prox = atual;
+            tam++;
+        }
+    }
+    else
+        printf("Elemento invalido\n\n");
+}
+
+node *retiraInicio(node *LISTA)
+{
+    if (LISTA->prox == NULL)
+    {
+        printf("Lista ja esta vazia\n");
+        return NULL;
+    }
+    else
+    {
+        node *tmp = LISTA->prox;
+        LISTA->prox = tmp->prox;
+        tam--;
+        return tmp;
+    }
+}
+
+node *retiraFim(node *LISTA)
+{
+    if (LISTA->prox == NULL)
+    {
+        printf("Lista ja vazia\n\n");
+        return NULL;
+    }
+    else
+    {
+        node *ultimo = LISTA->prox,
+             *penultimo = LISTA;
+
+        while (ultimo->prox != NULL)
+        {
+            penultimo = ultimo;
+            ultimo = ultimo->prox;
+        }
+
+        penultimo->prox = NULL;
+        tam--;
+        return ultimo;
+    }
+}
+
+node *retira(node *LISTA)
+{
+    int opt,
+        count;
+    printf("Que posicao, [de 1 ate %d] voce deseja retirar: ", tam);
+    scanf("%d", &opt);
+
+    if (opt > 0 && opt <= tam)
+    {
+        if (opt == 1)
+            return retiraInicio(LISTA);
+        else
+        {
+            node *atual = LISTA->prox,
+                 *anterior = LISTA;
+
+            for (count = 1; count < opt; count++)
+            {
+                anterior = atual;
+                atual = atual->prox;
+            }
+
+            anterior->prox = atual->prox;
+            tam--;
+            return atual;
+        }
+    }
+    else
+    {
+        printf("Elemento invalido\n\n");
+        return NULL;
+    }
 }
